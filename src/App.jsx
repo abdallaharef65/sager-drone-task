@@ -47,16 +47,18 @@ function App() {
   }, []);
 
   return (
-    <div className="flex h-screen">
-      <Sidebar
-        droneData={droneData}
-        selectedDrone={selectedDrone}
-        setSelectedDrone={setSelectedDrone}
-        displayCount={displayCount}
-        setDisplayCount={setDisplayCount}
-      />
-
+    <div className="flex h-screen bg-black relative">
       <Mapbox droneData={droneData} />
+
+      <div className="absolute top-0 left-0 h-full">
+        <Sidebar
+          droneData={droneData}
+          selectedDrone={selectedDrone}
+          setSelectedDrone={setSelectedDrone}
+          displayCount={displayCount}
+          setDisplayCount={setDisplayCount}
+        />
+      </div>
     </div>
   );
 }

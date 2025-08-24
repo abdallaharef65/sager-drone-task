@@ -18,6 +18,20 @@ const MapSvg = () => (
     />
   </svg>
 );
+const CloseSvg = () => (
+  <svg
+    width="22"
+    height="23"
+    viewBox="0 0 22 23"
+    fill="white"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M18.782 3.31736C17.2432 1.77864 15.2832 0.731098 13.1497 0.307146C11.0162 -0.116807 8.80503 0.101864 6.79567 0.935517C4.78632 1.76917 3.06899 3.18038 1.86077 4.99076C0.652556 6.80115 0.00769043 8.92943 0.00769043 11.1066C0.00769043 13.2837 0.652556 15.412 1.86077 17.2224C3.06899 19.0328 4.78632 20.444 6.79567 21.2776C8.80503 22.1113 11.0162 22.33 13.1497 21.906C15.2832 21.4821 17.2432 20.4345 18.782 18.8958C20.8429 16.8283 22.0002 14.0271 22.0002 11.1066C22.0002 8.18608 20.8429 5.38482 18.782 3.31736ZM15.539 14.3526C15.7114 14.5251 15.8083 14.7592 15.8083 15.0032C15.8083 15.2472 15.7114 15.4812 15.539 15.6538C15.3666 15.8263 15.1328 15.9233 14.889 15.9233C14.6452 15.9233 14.4114 15.8263 14.239 15.6538L11 12.4028L7.75904 15.6498C7.67368 15.7352 7.57234 15.803 7.46081 15.8492C7.34929 15.8955 7.22975 15.9193 7.10904 15.9193C6.98832 15.9193 6.86879 15.8955 6.75726 15.8492C6.64573 15.803 6.5444 15.7352 6.45904 15.6498C6.37368 15.5643 6.30597 15.4629 6.25977 15.3513C6.21358 15.2397 6.1898 15.12 6.1898 14.9992C6.1898 14.8784 6.21358 14.7587 6.25977 14.6471C6.30597 14.5354 6.37368 14.434 6.45904 14.3486L9.70004 11.1016L6.46204 7.86157C6.28965 7.68902 6.1928 7.45499 6.1928 7.21097C6.1928 6.96694 6.28965 6.73292 6.46204 6.56037C6.63443 6.38781 6.86824 6.29088 7.11204 6.29088C7.35583 6.29088 7.58965 6.38781 7.76204 6.56037L11 9.80837L14.242 6.56337C14.4144 6.39082 14.6482 6.29388 14.892 6.29388C15.1358 6.29388 15.3696 6.39082 15.542 6.56337C15.7144 6.73592 15.8113 6.96995 15.8113 7.21397C15.8113 7.45799 15.7144 7.69202 15.542 7.86457L12.3 11.1016L15.539 14.3526Z"
+      fill="black"
+    />
+  </svg>
+);
 
 const Sidebar = ({
   droneData,
@@ -26,15 +40,10 @@ const Sidebar = ({
   displayCount,
   setDisplayCount,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false); // للتحكم بتوسيع السايد بار
+  const [isExpanded, setIsExpanded] = useState(false);
   const listRef = useRef();
 
-  const dronesArray = Array.from(droneData.values()).filter(
-    (drone) =>
-      drone.properties.Name.toLowerCase().includes("".toLowerCase()) ||
-      drone.properties.registration.toLowerCase().includes("".toLowerCase())
-  );
-
+  const dronesArray = Array.from(droneData.values());
   const displayedDrones = dronesArray.slice(0, displayCount);
 
   const handleScroll = () => {
@@ -47,30 +56,26 @@ const Sidebar = ({
   };
 
   const getStatusColor = (registration) => {
-    if (registration && registration[0].toUpperCase() === "B") {
-      return true; // أخضر
-    }
-    return false; // أحمر
+    return registration && registration[0].toUpperCase() === "B";
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-full">
+      {/* الشريط الجانبي الثابت */}
       <div
-        className={`bg-gray-900 text-white p-4 flex flex-col items-center transition-all duration-300 ${
+        className={`bg-black text-white p-4 flex flex-col items-center transition-all duration-300 ${
           isExpanded ? "w-18" : "w-16"
         }`}
       >
-        <button
-          className="mb-4 p-2 "
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          {/* أيقونة واحدة */}
+        {/* زر فتح القائمة */}
+        <button className="mb-4 p-2" onClick={() => setIsExpanded(!isExpanded)}>
           <span className="text-white font-bold flex flex-col justify-center items-center">
             <MapSvg />
             <div>MAP</div>
           </span>
         </button>
 
+        {/* صورة البروفايل */}
         <div className="mt-auto">
           <img
             src="/src/assets/images/profile.jpg"
@@ -80,43 +85,57 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* القائمة الخاصة بالطائرات */}
+      {/* القائمة عند التوسيع */}
       {isExpanded && (
         <div
-          className="w-72 bg-gray-900 text-white p-4 overflow-y-auto"
+          className="w-72 bg-black text-white flex flex-col m-1.5"
           ref={listRef}
           onScroll={handleScroll}
         >
-          {displayedDrones.length === 0 ? (
-            <p>No drones found</p>
-          ) : (
-            <ul>
-              {displayedDrones.map((drone) => {
-                const regNum = drone.properties.registration;
-                return (
-                  <li
-                    key={regNum}
-                    className={`p-3 mb-3 rounded cursor-pointer flex items-center justify-between ${
-                      selectedDrone === regNum
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-800 hover:bg-gray-700"
-                    }`}
-                    onClick={() => setSelectedDrone(regNum)}
-                  >
-                    <div>
-                      <p className="font-semibold">{drone.properties.Name}</p>
-                      <p className="text-sm">registration: {regNum}</p>
-                    </div>
-                    <div
-                      className={`w-4 h-4 rounded-full ${
-                        getStatusColor(regNum) ? "bg-green-500" : "bg-red-500"
+          {/* الهيدر */}
+          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700 ">
+            <h2 className="text-lg font-bold">DRONE FLYING</h2>
+            <button
+              className="w-6 h-6 flex items-center justify-center text-xs font-bold text-black hover:text-white bg-[#777777] rounded-full"
+              onClick={() => setIsExpanded(false)}
+            >
+              X
+            </button>
+          </div>
+
+          {/* قائمة الطائرات */}
+          <div className="p-4 overflow-y-auto">
+            {displayedDrones.length === 0 ? (
+              <p>No drones found</p>
+            ) : (
+              <ul>
+                {displayedDrones.map((drone) => {
+                  const regNum = drone.properties.registration;
+                  return (
+                    <li
+                      key={regNum}
+                      className={`p-3 mb-3 rounded cursor-pointer flex items-center justify-between ${
+                        selectedDrone === regNum
+                          ? "bg-[#272727] text-white"
+                          : "bg-black hover:bg-gray-700"
                       }`}
-                    ></div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                      onClick={() => setSelectedDrone(regNum)}
+                    >
+                      <div>
+                        <p className="font-semibold">{drone.properties.Name}</p>
+                        <p className="text-sm">registration: {regNum}</p>
+                      </div>
+                      <div
+                        className={`w-4 h-4 rounded-full ${
+                          getStatusColor(regNum) ? "bg-green-500" : "bg-red-500"
+                        }`}
+                      ></div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>

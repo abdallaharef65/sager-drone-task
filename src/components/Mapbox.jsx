@@ -4,7 +4,7 @@ import mapboxgl from "mapbox-gl";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYWJkYWxsYWhhcmVmNjUiLCJhIjoiY21lcHVrOGp4MHNtbjJrcXZsMTBudHNsdiJ9.BrPZ_T8I6bgDAo2iwaPvxQ";
 
-const droneSvgString = `  <svg
+const droneSvgString = `<svg
     width="29"
     height="30"
     viewBox="0 0 29 30"
@@ -57,8 +57,6 @@ export default function Mapbox({ droneData }) {
 
   useEffect(() => {
     if (!mapRef.current) return;
-
-    // تأكد من أن الخريطة جاهزة
     const map = mapRef.current;
 
     function addDrones() {
@@ -124,6 +122,6 @@ export default function Mapbox({ droneData }) {
   }, [droneData]);
 
   return (
-    <div ref={mapContainerRef} style={{ width: "100%", height: "100vh" }} />
+    <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
   );
 }
