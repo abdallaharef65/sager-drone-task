@@ -56,7 +56,8 @@ const Sidebar = ({
   };
 
   const getStatusColor = (registration) => {
-    return registration && registration[0].toUpperCase() === "B";
+    const firstCharAfterDash = registration.split("-")[1][0];
+    return firstCharAfterDash == "B";
   };
 
   return (

@@ -28,9 +28,10 @@ function App() {
             existing.geometry = { ...newFeature.geometry };
             updated.set(reg, existing);
           } else {
+            const firstCharAfterDash = reg.split("-")[1][0];
             updated.set(reg, {
               id: reg,
-              color: reg[0].toUpperCase() === "B" ? "#00d93d" : "#ff0000",
+              color: firstCharAfterDash == "B" ? "#00d93d" : "#ff0000",
               path: [coord],
               type: newFeature.type,
               properties: { ...newFeature.properties },
