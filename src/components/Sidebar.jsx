@@ -45,7 +45,6 @@ const Sidebar = ({
 
   const dronesArray = Array.from(droneData.values());
   const displayedDrones = dronesArray.slice(0, displayCount);
-
   const handleScroll = () => {
     if (listRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
