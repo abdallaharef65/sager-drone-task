@@ -41,10 +41,12 @@ const Sidebar = ({
   setDisplayCount,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [activeTab, setActiveTab] = useState("drones"); // ✅ تبويب مبدئي
   const listRef = useRef();
 
   const dronesArray = Array.from(droneData.values());
   const displayedDrones = dronesArray.slice(0, displayCount);
+
   const handleScroll = () => {
     if (listRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
@@ -84,48 +86,61 @@ const Sidebar = ({
 
       {isExpanded && (
         <div
-          className="w-72 bg-black text-white flex flex-col m-1.5"
+          className="w-72 bg-[#111111] text-white flex flex-col m-1.5"
           ref={listRef}
           onScroll={handleScroll}
         >
-          <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700 ">
-            <h2 className="text-lg font-bold">DRONE FLYING</h2>
-            <button
-              className="w-6 h-6 flex items-center justify-center text-xs font-bold text-black hover:text-white bg-[#777777] rounded-full"
-              onClick={() => setIsExpanded(false)}
-            >
-              X
-            </button>
+          <div className="px-4 py-2 border-b border-black">
+            <h2 className="text-lg font-bold mb-2">DRONE FLYING</h2>
+
+            <div className="flex space-x-6 text-sm font-medium">
+              <button
+                onClick={() => setActiveTab("drones")}
+                className={`pb-1 ${
+                  activeTab === "drones"
+                    ? "border-b-2 border-red-500 text-white"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Drones
+              </button>
+              <button
+                onClick={() => setActiveTab("history")}
+                className={`pb-1 ${
+                  activeTab === "history"
+                    ? "border-b-2 border-red-500 text-white"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                Flights History
+              </button>
+            </div>
           </div>
 
           <div className="overflow-y-auto">
-            {displayedDrones.length === 0 ? (
-              <p>No drones found</p>
-            ) : (
-              <ul>
-                {displayedDrones.map((drone) => {
-                  const regNum = drone.properties.registration;
-                  return (
-                    <li
-                      key={regNum}
-                      className={`p-3 cursor-pointer flex items-center justify-between ${
-                        selectedDrone === regNum
-                          ? "bg-[#272727] text-white"
-                          : "bg-black hover:bg-gray-700"
-                      }`}
-                      onClick={() => setSelectedDrone(regNum)}
-                    >
-                      <div>
-                        <div className=" text-white w-full max-w-md">
-                          {/* Title */}
+            {activeTab === "drones" ? (
+              displayedDrones.length === 0 ? (
+                <p>No drones found</p>
+              ) : (
+                <ul>
+                  {displayedDrones.map((drone) => {
+                    const regNum = drone.properties.registration;
+                    return (
+                      <li
+                        key={regNum}
+                        className={`border-b border-black p-3 cursor-pointer flex items-center justify-between ${
+                          selectedDrone === regNum
+                            ? "bg-[#272727] text-white"
+                            : "bg-[#111111] hover:bg-gray-700"
+                        }`}
+                        onClick={() => setSelectedDrone(regNum)}
+                      >
+                        <div>
                           <h2 className="font-bold mb-2">
                             {drone.properties.Name}
                           </h2>
 
-                          {/* Info Rows */}
-
-                          <div className="flex row justify-between space-x-8 mb-2">
-                            {/* Serial */}
+                          <div className="flex justify-between space-x-8 mb-2">
                             <div>
                               <div className="text-gray-400 text-[11px]">
                                 Serial #
@@ -135,9 +150,7 @@ const Sidebar = ({
                               </div>
                             </div>
 
-                            {/* Registration + Red Circle */}
-
-                            <div className="">
+                            <div>
                               <div className="text-gray-400 text-[11px]">
                                 Registration #
                               </div>
@@ -146,9 +159,8 @@ const Sidebar = ({
                               </div>
                             </div>
                           </div>
-                          {/* ////////////////////////// */}
-                          <div className="flex row justify-between space-x-8">
-                            {/* Serial */}
+
+                          <div className="flex justify-between space-x-8">
                             <div>
                               <div className="text-gray-400 text-[11px]">
                                 Pilot
@@ -158,28 +170,33 @@ const Sidebar = ({
                               </div>
                             </div>
 
-                            {/* Registration + Red Circle */}
-
-                            <div className="">
+                            <div>
                               <div className="text-gray-400 text-[11px]">
                                 Organization
                               </div>
                               <div className="text-gray-400 text-[11px] font-semibold">
-                                SD-9479524131
+                                {drone.properties.organization}
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className={`w-4 h-4 rounded-full ${
-                          getStatusColor(regNum) ? "bg-green-500" : "bg-red-500"
-                        }`}
-                      ></div>
-                    </li>
-                  );
-                })}
-              </ul>
+
+                        <div
+                          className={`w-[18px] h-[18px] rounded-full border-1 border-amber-50 ${
+                            getStatusColor(regNum)
+                              ? "bg-green-500"
+                              : "bg-red-500"
+                          }`}
+                        ></div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )
+            ) : (
+              <div className="p-4 text-gray-400">
+                Flights history content goes here...
+              </div>
             )}
           </div>
         </div>
