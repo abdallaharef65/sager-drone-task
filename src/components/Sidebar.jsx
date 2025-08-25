@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDrone, setDisplayCount } from "../redux/slices/droneSlice";
-
+import { Link, useLocation } from "react-router-dom";
 const MapSvg = () => (
   <svg
     width="26"
@@ -43,7 +43,10 @@ const Sidebar = () => {
   const dispatch = useDispatch();
 
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState("drones"); // ✅ تبويب مبدئي
+  const [activeTab, setActiveTab] = useState("drones");
+
+  const location = useLocation();
+  const currentPath = location.pathname;
   const listRef = useRef();
 
   const dronesArray = Array.from(droneData.values());
@@ -68,16 +71,42 @@ const Sidebar = () => {
   return (
     <div className="flex h-full">
       <div
-        className={`bg-black text-white p-4 flex flex-col items-center transition-all duration-300 ${
-          isExpanded ? "w-18" : "w-16"
-        }`}
+        className={`bg-black text-white p-4 flex flex-col items-center transition-all duration-300 w-36`}
       >
-        <button className="mb-4 p-2" onClick={() => setIsExpanded(!isExpanded)}>
-          <span className="text-white font-bold flex flex-col justify-center items-center">
+        <div
+          className={` w-full border-l-4 ${
+            currentPath === "/dashboard"
+              ? "border-red-500"
+              : "border-transparent"
+          }`}
+        >
+          <Link
+            className={`text-white font-bold flex flex-col justify-center items-center  transition-all duration-200 ${
+              currentPath === "/dashboard"
+                ? "border-red-500"
+                : "border-transparent"
+            }`}
+            to="/dashboard"
+          >
+            <MapSvg />
+            <div>Dashboard</div>
+          </Link>
+        </div>
+
+        <div
+          className={`w-full border-l-4 ${
+            currentPath === "/map" ? "border-red-500" : "border-transparent"
+          }`}
+        >
+          <Link
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={`text-white font-bold flex flex-col justify-center items-center transition-all duration-200 `}
+            to="/map"
+          >
             <MapSvg />
             <div>MAP</div>
-          </span>
-        </button>
+          </Link>
+        </div>
 
         <div className="mt-auto">
           <img

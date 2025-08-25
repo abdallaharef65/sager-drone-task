@@ -46,7 +46,6 @@ function Map() {
           }
         });
 
-        // نرسل البيانات الجديدة للـ Redux
         dispatch(setDroneData(updated));
       });
     });
@@ -57,9 +56,6 @@ function Map() {
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <Mapbox />
-      {/* <div className="absolute top-0 left-0 h-full">
-        <Sidebar />
-      </div> */}
     </div>
   );
 }
