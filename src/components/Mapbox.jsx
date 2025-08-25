@@ -3,8 +3,8 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedDrone } from "../redux/slices/droneSlice";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYWJkYWxsYWhhcmVmNjUiLCJhIjoiY21lcHVrOGp4MHNtbjJrcXZsMTBudHNsdiJ9.BrPZ_T8I6bgDAo2iwaPvxQ";
 
@@ -43,9 +43,30 @@ const droneSvgString = `<svg
   </svg>`;
 
 export default function Mapbox() {
+  const dispatch = useDispatch();
+
+  const selectedDrone = useSelector((state) => state.drones.selectedDrone);
   const droneData = useSelector((state) => state.drones.droneData);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    if (!mapRef.current || !selectedDrone) return;
+
+    const map = mapRef.current;
+
+    const drone = droneData.find((d) => d.id === selectedDrone);
+    if (!drone || !drone.path.length) return;
+
+    const lastCoord = drone.path[drone.path.length - 1];
+
+    map.flyTo({
+      center: lastCoord,
+      zoom: 15,
+      speed: 1.5,
+      curve: 2,
+    });
+  }, [selectedDrone]);
 
   useEffect(() => {
     // Initialize the map
@@ -214,6 +235,24 @@ export default function Mapbox() {
       map.on("load", addOrUpdateDrones);
     }
   }, [droneData]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const map = mapRef.current;
+
+    map.on("click", "drones-layer", (e) => {
+      if (!e.features || !e.features.length) return;
+      const clickedDrone = e.features[0].properties;
+      dispatch(setSelectedDrone(clickedDrone.id));
+    });
+
+    map.on("mouseenter", "drones-layer", () => {
+      map.getCanvas().style.cursor = "pointer";
+    });
+    map.on("mouseleave", "drones-layer", () => {
+      map.getCanvas().style.cursor = "";
+    });
+  }, [dispatch]);
 
   return (
     <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
