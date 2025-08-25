@@ -61,13 +61,11 @@ const Sidebar = ({
 
   return (
     <div className="flex h-full">
-      {/* الشريط الجانبي الثابت */}
       <div
         className={`bg-black text-white p-4 flex flex-col items-center transition-all duration-300 ${
           isExpanded ? "w-18" : "w-16"
         }`}
       >
-        {/* زر فتح القائمة */}
         <button className="mb-4 p-2" onClick={() => setIsExpanded(!isExpanded)}>
           <span className="text-white font-bold flex flex-col justify-center items-center">
             <MapSvg />
@@ -75,7 +73,6 @@ const Sidebar = ({
           </span>
         </button>
 
-        {/* صورة البروفايل */}
         <div className="mt-auto">
           <img
             src="/src/assets/images/profile.jpg"
@@ -85,14 +82,12 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* القائمة عند التوسيع */}
       {isExpanded && (
         <div
           className="w-72 bg-black text-white flex flex-col m-1.5"
           ref={listRef}
           onScroll={handleScroll}
         >
-          {/* الهيدر */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-gray-700 ">
             <h2 className="text-lg font-bold">DRONE FLYING</h2>
             <button
@@ -103,8 +98,7 @@ const Sidebar = ({
             </button>
           </div>
 
-          {/* قائمة الطائرات */}
-          <div className="p-4 overflow-y-auto">
+          <div className="overflow-y-auto">
             {displayedDrones.length === 0 ? (
               <p>No drones found</p>
             ) : (
@@ -114,7 +108,7 @@ const Sidebar = ({
                   return (
                     <li
                       key={regNum}
-                      className={`p-3 mb-3 rounded cursor-pointer flex items-center justify-between ${
+                      className={`p-3 cursor-pointer flex items-center justify-between ${
                         selectedDrone === regNum
                           ? "bg-[#272727] text-white"
                           : "bg-black hover:bg-gray-700"
@@ -122,8 +116,60 @@ const Sidebar = ({
                       onClick={() => setSelectedDrone(regNum)}
                     >
                       <div>
-                        <p className="font-semibold">{drone.properties.Name}</p>
-                        <p className="text-sm">registration: {regNum}</p>
+                        <div className=" text-white w-full max-w-md">
+                          {/* Title */}
+                          <h2 className="font-bold mb-2">
+                            {drone.properties.Name}
+                          </h2>
+
+                          {/* Info Rows */}
+
+                          <div className="flex row justify-between space-x-8 mb-2">
+                            {/* Serial */}
+                            <div>
+                              <div className="text-gray-400 text-[11px]">
+                                Serial #
+                              </div>
+                              <div className="text-gray-400 text-[11px] font-semibold">
+                                {drone.properties.serial}
+                              </div>
+                            </div>
+
+                            {/* Registration + Red Circle */}
+
+                            <div className="">
+                              <div className="text-gray-400 text-[11px]">
+                                Registration #
+                              </div>
+                              <div className="text-gray-400 text-[11px] font-semibold">
+                                {drone.properties.registration}
+                              </div>
+                            </div>
+                          </div>
+                          {/* ////////////////////////// */}
+                          <div className="flex row justify-between space-x-8">
+                            {/* Serial */}
+                            <div>
+                              <div className="text-gray-400 text-[11px]">
+                                Pilot
+                              </div>
+                              <div className="text-gray-400 text-[11px] font-semibold">
+                                {drone.properties.pilot}
+                              </div>
+                            </div>
+
+                            {/* Registration + Red Circle */}
+
+                            <div className="">
+                              <div className="text-gray-400 text-[11px]">
+                                Organization
+                              </div>
+                              <div className="text-gray-400 text-[11px] font-semibold">
+                                SD-9479524131
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       <div
                         className={`w-4 h-4 rounded-full ${
