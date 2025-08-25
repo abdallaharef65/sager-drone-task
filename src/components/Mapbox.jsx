@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import * as turf from "@turf/turf";
+import { useSelector } from "react-redux";
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYWJkYWxsYWhhcmVmNjUiLCJhIjoiY21lcHVrOGp4MHNtbjJrcXZsMTBudHNsdiJ9.BrPZ_T8I6bgDAo2iwaPvxQ";
@@ -41,7 +42,8 @@ const droneSvgString = `<svg
     />
   </svg>`;
 
-export default function Mapbox({ droneData }) {
+export default function Mapbox() {
+  const droneData = useSelector((state) => state.drones.droneData);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 

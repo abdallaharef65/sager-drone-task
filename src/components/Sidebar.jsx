@@ -1,4 +1,6 @@
 import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedDrone, setDisplayCount } from "../redux/slices/droneSlice";
 
 const MapSvg = () => (
   <svg
@@ -33,13 +35,13 @@ const CloseSvg = () => (
   </svg>
 );
 
-const Sidebar = ({
-  droneData,
-  selectedDrone,
-  setSelectedDrone,
-  displayCount,
-  setDisplayCount,
-}) => {
+const Sidebar = () => {
+  const droneData = useSelector((state) => state.drones.droneData);
+  const selectedDrone = useSelector((state) => state.drones.selectedDrone);
+  const displayCount = useSelector((state) => state.drones.displayCount);
+
+  const dispatch = useDispatch();
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("drones"); // ✅ تبويب مبدئي
   const listRef = useRef();
@@ -51,7 +53,9 @@ const Sidebar = ({
     if (listRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
       if (scrollTop + clientHeight >= scrollHeight - 10) {
-        setDisplayCount((prev) => Math.min(prev + 20, dronesArray.length));
+        dispatch(
+          setDisplayCount((prev) => Math.min(prev + 20, dronesArray.length))
+        );
       }
     }
   };
@@ -129,11 +133,11 @@ const Sidebar = ({
                       <li
                         key={regNum}
                         className={`border-b border-black p-3 cursor-pointer flex items-center justify-between ${
-                          selectedDrone === regNum
+                          selectedDrone == regNum
                             ? "bg-[#272727] text-white"
                             : "bg-[#111111] hover:bg-gray-700"
                         }`}
-                        onClick={() => setSelectedDrone(regNum)}
+                        onClick={() => dispatch(setSelectedDrone(regNum))}
                       >
                         <div>
                           <h2 className="font-bold mb-2">
