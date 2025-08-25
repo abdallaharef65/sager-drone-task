@@ -9,11 +9,9 @@ import {
 import Map from "./pages/Map";
 import Dashboard from "./pages/Dashboard";
 import Sidebar from "./components/Sidebar";
-import { useSelector } from "react-redux";
+import AppHeader from "./components/AppHeader";
 
 function App() {
-  const droneData = useSelector((state) => state.drones.droneData);
-  console.log("droneData  > > >", droneData);
   return (
     <Router>
       <div>
@@ -24,7 +22,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </div>
-        <div className="absolute top-0 left-0 h-full">
+        <AppHeader />
+        <div className="absolute top-[72px] left-0 h-full">
           <Sidebar />
         </div>
       </div>
