@@ -16,6 +16,7 @@ export default function Mapbox() {
 
   const selectedDrone = useSelector((state) => state.drones.selectedDrone);
   const droneData = useSelector((state) => state.drones.droneData);
+
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
@@ -60,19 +61,10 @@ export default function Mapbox() {
       // --- Prepare drone point features ---
       const droneFeatures = droneData.map((drone) => {
         const lastCoord = drone.path[drone.path.length - 1];
-        let angle = 0;
-
-        // Calculate bearing (rotation) between last two points
-        if (drone.path.length > 1) {
-          const [lng1, lat1] = drone.path[drone.path.length - 2];
-          const [lng2, lat2] = lastCoord;
-          angle = (Math.atan2(lat2 - lat1, lng2 - lng1) * 180) / Math.PI;
-        }
-
         return {
           type: "Feature",
           geometry: { type: "Point", coordinates: lastCoord },
-          properties: { id: drone.id, bearing: angle, color: drone.color },
+          properties: { id: drone.id, color: drone.color },
         };
       });
 
@@ -86,7 +78,6 @@ export default function Mapbox() {
         type: "Feature",
         geometry: {
           type: "LineString",
-          // Simplify path using turf.js for better performance
           coordinates: turf.simplify(
             {
               type: "Feature",
@@ -111,16 +102,14 @@ export default function Mapbox() {
 
         // Drone SVG icon as a string
         const svgString = renderToStaticMarkup(<DroneSvg />);
-        // Convert SVG string to an image
         const img = new Image();
         img.src =
           "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
 
         img.onload = () => {
-          // Add drone image if not already added
           if (!map.hasImage("drone-icon")) map.addImage("drone-icon", img);
 
-          // Background circle behind drone (with dynamic color)
+          // Background circle
           map.addLayer({
             id: "drones-bg",
             type: "circle",
@@ -128,11 +117,11 @@ export default function Mapbox() {
             filter: ["!", ["has", "point_count"]],
             paint: {
               "circle-radius": 12,
-              "circle-color": ["get", "color"], // use drone color
+              "circle-color": ["get", "color"],
             },
           });
 
-          // Drone symbol (SVG)
+          // Drone icon without rotation
           map.addLayer({
             id: "drones-layer",
             type: "symbol",
@@ -141,7 +130,6 @@ export default function Mapbox() {
               "icon-image": "drone-icon",
               "icon-size": 0.5,
               "icon-allow-overlap": true,
-              "icon-rotate": ["get", "bearing"], // rotate based on bearing
             },
           });
         };
@@ -154,7 +142,7 @@ export default function Mapbox() {
           source: "drone-paths",
           layout: { "line-join": "round", "line-cap": "round" },
           paint: {
-            "line-color": ["get", "color"], // dynamic path color
+            "line-color": ["get", "color"],
             "line-width": 2,
           },
         });
@@ -192,13 +180,11 @@ export default function Mapbox() {
           },
         });
       } else {
-        // --- Update data if sources already exist ---
         map.getSource("drones").setData(droneGeoJSON);
         map.getSource("drone-paths").setData(pathGeoJSON);
       }
     }
 
-    // Add drones only when style is fully loaded
     if (map.isStyleLoaded()) {
       addOrUpdateDrones();
     } else {
