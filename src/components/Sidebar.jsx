@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedDrone, setDisplayCount } from "../redux/slices/droneSlice";
+import { setSelectedDrone } from "../redux/slices/droneSlice";
 import { Link, useLocation } from "react-router-dom";
 import DashboardSvg from "../assets/svg/Dashboard.svg?react";
 import MapSvg from "../assets/svg/Map.svg?react";
@@ -8,41 +8,99 @@ import MapSvg from "../assets/svg/Map.svg?react";
 const Sidebar = () => {
   const droneData = useSelector((state) => state.drones.droneData);
   const selectedDrone = useSelector((state) => state.drones.selectedDrone);
-  const displayCount = useSelector((state) => state.drones.displayCount);
 
   const dispatch = useDispatch();
-
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("drones");
+  const [startIndex, setStartIndex] = useState(0);
+  const windowSize = 50;
 
   const location = useLocation();
   const currentPath = location.pathname;
   const listRef = useRef();
 
   const dronesArray = Array.from(droneData.values());
-  const displayedDrones = dronesArray.slice(0, displayCount);
+
+  const endIndex = Math.min(startIndex + windowSize, dronesArray.length);
+  let displayedDrones = dronesArray.slice(startIndex, endIndex);
+
+  if (
+    selectedDrone &&
+    !displayedDrones.some((d) => d.properties.registration === selectedDrone)
+  ) {
+    const selectedFullDrone = dronesArray.find(
+      (d) => d.properties.registration === selectedDrone
+    );
+    if (selectedFullDrone) {
+      displayedDrones = [selectedFullDrone, ...displayedDrones];
+    }
+  }
+
+  let sortedDrones = [...displayedDrones];
+  if (selectedDrone) {
+    const index = sortedDrones.findIndex(
+      (d) => d.properties.registration === selectedDrone
+    );
+    if (index > 0) {
+      const [selectedItem] = sortedDrones.splice(index, 1);
+      sortedDrones.unshift(selectedItem);
+    }
+  }
 
   const handleScroll = () => {
-    if (listRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 10) {
-        dispatch(
-          setDisplayCount((prev) => Math.min(prev + 20, dronesArray.length))
+    if (!listRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      if (startIndex + windowSize < dronesArray.length) {
+        setStartIndex((prev) =>
+          Math.min(prev + 30, dronesArray.length - windowSize)
         );
+      }
+    }
+
+    if (scrollTop <= 10) {
+      if (startIndex > 0) {
+        setStartIndex((prev) => Math.max(prev - 30, 0));
       }
     }
   };
 
   const getStatusColor = (registration) => {
     const firstCharAfterDash = registration.split("-")[1][0];
-    return firstCharAfterDash == "B";
+    return firstCharAfterDash === "B";
+  };
+
+  const handleShowAbove = () => {
+    if (startIndex > 0) {
+      setStartIndex((prev) => Math.max(prev - 30, 0));
+
+      setTimeout(() => {
+        if (listRef.current) {
+          listRef.current.scrollTop += 100;
+        }
+      }, 0);
+    }
+  };
+
+  const handleShowBelow = () => {
+    if (endIndex < dronesArray.length) {
+      setStartIndex((prev) =>
+        Math.min(prev + 30, dronesArray.length - windowSize)
+      );
+
+      setTimeout(() => {
+        if (listRef.current) {
+          listRef.current.scrollTop -= 100;
+        }
+      }, 0);
+    }
   };
 
   return (
     <div className="flex h-[878px]">
-      <div
-        className={`bg-black text-white  pt-4 flex flex-col items-center transition-all duration-300 w-36 mb-8`}
-      >
+      <div className="bg-black text-white pt-4 flex flex-col items-center transition-all duration-300 w-36 mb-8">
         <div
           className={`pb-2 pt-2 w-full border-l-4 ${
             currentPath === "/dashboard"
@@ -51,11 +109,7 @@ const Sidebar = () => {
           }`}
         >
           <Link
-            className={`text-white font-bold flex flex-col justify-center items-center  transition-all duration-200 ${
-              currentPath === "/dashboard"
-                ? "border-red-500"
-                : "border-transparent"
-            }`}
+            className={`text-white font-bold flex flex-col justify-center items-center transition-all duration-200`}
             to="/dashboard"
           >
             <DashboardSvg
@@ -86,7 +140,7 @@ const Sidebar = () => {
         >
           <Link
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`text-white font-bold flex flex-col justify-center items-center transition-all duration-200 `}
+            className={`text-white font-bold flex flex-col justify-center items-center transition-all duration-200`}
             to="/map"
           >
             <MapSvg
@@ -114,14 +168,9 @@ const Sidebar = () => {
       </div>
 
       {isExpanded && (
-        <div
-          className="w-72 bg-[#111111] text-white flex flex-col m-1.5 h-[840px]"
-          ref={listRef}
-          onScroll={handleScroll}
-        >
+        <div className="w-72 bg-[#111111] text-white flex flex-col m-1.5 h-[840px]">
           <div className="px-4 py-2 border-b border-black">
             <h2 className="text-lg font-bold mb-2">DRONE FLYING</h2>
-
             <div className="flex space-x-6 text-sm font-medium">
               <button
                 onClick={() => setActiveTab("drones")}
@@ -146,19 +195,31 @@ const Sidebar = () => {
             </div>
           </div>
 
-          <div className="overflow-y-auto">
+          <div
+            className="overflow-y-auto"
+            ref={listRef}
+            onScroll={handleScroll}
+          >
             {activeTab === "drones" ? (
-              displayedDrones.length === 0 ? (
-                <p>No drones found</p>
+              sortedDrones.length === 0 ? (
+                <p className="p-4">No drones found</p>
               ) : (
                 <ul>
-                  {displayedDrones.map((drone) => {
+                  {startIndex > 0 && (
+                    <div
+                      onClick={handleShowAbove}
+                      className="text-center text-gray-500 p-2 text-sm cursor-pointer hover:text-white hover:bg-gray-700"
+                    >
+                      ↑ {startIndex} items hidden ↑ (Click to show)
+                    </div>
+                  )}
+                  {sortedDrones.map((drone) => {
                     const regNum = drone.properties.registration;
                     return (
                       <li
                         key={regNum}
                         className={`border-b border-black p-3 cursor-pointer flex items-center justify-between ${
-                          selectedDrone == regNum
+                          selectedDrone === regNum
                             ? "bg-[#272727] text-white"
                             : "bg-[#111111] hover:bg-gray-700"
                         }`}
@@ -220,6 +281,15 @@ const Sidebar = () => {
                       </li>
                     );
                   })}
+                  {endIndex < dronesArray.length && (
+                    <div
+                      onClick={handleShowBelow}
+                      className="text-center text-gray-500 p-2 text-sm cursor-pointer hover:text-white hover:bg-gray-700"
+                    >
+                      ↓ {dronesArray.length - endIndex} items hidden ↓ (Click to
+                      show)
+                    </div>
+                  )}
                 </ul>
               )
             ) : (
