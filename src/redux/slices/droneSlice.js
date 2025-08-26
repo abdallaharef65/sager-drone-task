@@ -5,12 +5,16 @@ const initialState = {
   droneData: [],
   selectedDrone: null,
   displayCount: 20,
+  redCount: 0,
 };
 
 const dronesSlice = createSlice({
   name: "drones",
   initialState,
   reducers: {
+    setDroneCount: (state, action) => {
+      state.redCount = action.payload;
+    },
     setDroneData: (state, action) => {
       state.droneData = action.payload;
     },
@@ -23,6 +27,10 @@ const dronesSlice = createSlice({
   },
 });
 
-export const { setDroneData, setSelectedDrone, setDisplayCount } =
-  dronesSlice.actions;
+export const {
+  setDroneData,
+  setSelectedDrone,
+  setDisplayCount,
+  setDroneCount,
+} = dronesSlice.actions;
 export default dronesSlice.reducer;
