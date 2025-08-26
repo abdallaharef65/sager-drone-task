@@ -24,12 +24,10 @@ export default function Mapbox() {
     if (!mapRef.current || !selectedDrone) return;
 
     const map = mapRef.current;
-
     const drone = droneData.find((d) => d.id === selectedDrone);
     if (!drone || !drone.path.length) return;
 
     const lastCoord = drone.path[drone.path.length - 1];
-
     map.flyTo({
       center: lastCoord,
       zoom: 15,
@@ -39,7 +37,6 @@ export default function Mapbox() {
   }, [selectedDrone]);
 
   useEffect(() => {
-    // Initialize the map
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/dark-v11",
@@ -47,7 +44,6 @@ export default function Mapbox() {
       zoom: 10,
     });
 
-    // Add zoom and rotation controls
     mapRef.current.addControl(new mapboxgl.NavigationControl(), "top-right");
 
     return () => mapRef.current.remove();
@@ -58,13 +54,18 @@ export default function Mapbox() {
     const map = mapRef.current;
 
     function addOrUpdateDrones() {
-      // --- Prepare drone point features ---
       const droneFeatures = droneData.map((drone) => {
         const lastCoord = drone.path[drone.path.length - 1];
+
         return {
           type: "Feature",
           geometry: { type: "Point", coordinates: lastCoord },
-          properties: { id: drone.id, color: drone.color },
+          properties: {
+            id: drone.id,
+            color: drone.color,
+            altitude: drone.properties.altitude,
+            appearanceTime: drone.properties.appearanceTime,
+          },
         };
       });
 
@@ -73,7 +74,6 @@ export default function Mapbox() {
         features: droneFeatures,
       };
 
-      // --- Prepare drone path features ---
       const pathFeatures = droneData.map((drone) => ({
         type: "Feature",
         geometry: {
@@ -91,16 +91,14 @@ export default function Mapbox() {
 
       const pathGeoJSON = { type: "FeatureCollection", features: pathFeatures };
 
-      // --- Add sources and layers ---
       if (!map.getSource("drones")) {
         map.addSource("drones", {
           type: "geojson",
           data: droneGeoJSON,
-          cluster: true, // enable clustering
+          cluster: true,
           clusterRadius: 50,
         });
 
-        // Drone SVG icon as a string
         const svgString = renderToStaticMarkup(<DroneSvg />);
         const img = new Image();
         img.src =
@@ -109,7 +107,6 @@ export default function Mapbox() {
         img.onload = () => {
           if (!map.hasImage("drone-icon")) map.addImage("drone-icon", img);
 
-          // Background circle
           map.addLayer({
             id: "drones-bg",
             type: "circle",
@@ -121,7 +118,6 @@ export default function Mapbox() {
             },
           });
 
-          // Drone icon without rotation
           map.addLayer({
             id: "drones-layer",
             type: "symbol",
@@ -134,7 +130,6 @@ export default function Mapbox() {
           });
         };
 
-        // Drone paths (lines)
         map.addSource("drone-paths", { type: "geojson", data: pathGeoJSON });
         map.addLayer({
           id: "drone-paths",
@@ -147,7 +142,6 @@ export default function Mapbox() {
           },
         });
 
-        // Clustered points visualization
         map.addLayer({
           id: "clusters",
           type: "circle",
@@ -167,7 +161,6 @@ export default function Mapbox() {
           },
         });
 
-        // Cluster count text
         map.addLayer({
           id: "cluster-count",
           type: "symbol",
@@ -196,17 +189,60 @@ export default function Mapbox() {
     if (!mapRef.current) return;
     const map = mapRef.current;
 
+    const popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+    });
+
     map.on("click", "drones-layer", (e) => {
       if (!e.features || !e.features.length) return;
       const clickedDrone = e.features[0].properties;
       dispatch(setSelectedDrone(clickedDrone.id));
     });
 
-    map.on("mouseenter", "drones-layer", () => {
+    map.on("mouseenter", "drones-bg", (e) => {
       map.getCanvas().style.cursor = "pointer";
+      if (!e.features || !e.features.length) return;
+
+      const { id, altitude, appearanceTime } = e.features[0].properties;
+
+      popup
+        .setLngLat(e.lngLat)
+        .setHTML(
+          `<div style="
+          background-color:#000;
+          color:#fff;
+          padding:8px 12px;
+          border-radius:8px;
+          font-family:sans-serif;
+          font-size:13px;
+          line-height:1.4;
+          text-align:left;
+          min-width:180px;">
+        <div style="font-weight:bold; font-size:14px; margin-bottom:4px;">${id}</div>
+        <div style="display:flex; justify-content:space-between; margin-top:4px;">
+          <div>
+            <div style="opacity:0.7;">Altitude</div>
+            <div>${altitude} m</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="opacity:0.7;">Flight Time</div>
+            <div>${appearanceTime}</div>
+          </div>
+        </div>
+      </div>`
+        )
+        .addTo(map);
     });
-    map.on("mouseleave", "drones-layer", () => {
+
+    map.on("mousemove", "drones-bg", (e) => {
+      if (!e.features || !e.features.length) return;
+      popup.setLngLat(e.lngLat);
+    });
+
+    map.on("mouseleave", "drones-bg", () => {
       map.getCanvas().style.cursor = "";
+      popup.remove();
     });
   }, [dispatch]);
 

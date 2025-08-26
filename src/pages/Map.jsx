@@ -5,10 +5,20 @@ import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setDroneCount, setDroneData } from "../redux/slices/droneSlice";
 import DroneSvg from "../assets/svg/DocSvg.svg?react";
+
 function Map() {
   const dispatch = useDispatch();
   const droneData = useSelector((state) => state.drones.droneData);
   const redDroneCount = useSelector((state) => state.drones.redCount);
+
+  const getCurrentTime = (now) => {
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds}`;
+  };
+
   useEffect(() => {
     const socket = io("http://localhost:9013");
 
@@ -26,21 +36,26 @@ function Map() {
             ...updated[idx],
             color: firstCharAfterDash === "B" ? "#00d93d" : "#ff0000",
             type: feature.type,
-            properties: { ...feature.properties },
+            properties: {
+              ...feature.properties,
+              appearanceTime: updated[idx].properties.appearanceTime,
+            },
             geometry: { ...feature.geometry },
             path: [...updated[idx].path, coord],
           };
         } else {
+          const appearanceTime = getCurrentTime(new Date());
           updated.push({
             color: firstCharAfterDash === "B" ? "#00d93d" : "#ff0000",
             id: droneId,
             type: feature.type,
-            properties: { ...feature.properties },
+            properties: { ...feature.properties, appearanceTime },
             geometry: { ...feature.geometry },
             path: [coord],
           });
         }
       });
+
       const redCount = updated.reduce(
         (count, d) => (d.color === "#ff0000" ? count + 1 : count),
         0
