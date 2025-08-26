@@ -9,6 +9,22 @@
   --container-xl: "1240px"; */
 }
 
+.mapboxgl-popup {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: black !important;
+}
+
 /* @import "tailwindcss/preflight";
 @tailwind utilities; */
 

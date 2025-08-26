@@ -1,21 +1,6 @@
 const AppHeader = () => {
   return (
-    <header
-      style={{
-        height: "72px",
-        width: "100%",
-        backgroundColor: "black",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        zIndex: 1000,
-        display: "flex",
-        alignItems: "center",
-        padding: "0 16px",
-        color: "#fff",
-        fontWeight: "bold",
-      }}
-    >
+    <header className="h-[72px] w-full bg-black fixed top-0 left-0 z-[1000] flex items-center px-4 text-white font-bold">
       My App Header
     </header>
   );

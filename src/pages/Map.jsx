@@ -69,27 +69,9 @@ function Map() {
   }, [dispatch, droneData]);
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        width: "100%",
-        marginTop: "72px",
-        position: "relative",
-      }}
-    >
+    <div className="h-screen w-full mt-[72px] relative">
       <Mapbox />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "100px",
-          right: "40px",
-          backgroundColor: "rgba(0,0,0,0.7)",
-          color: "white",
-          padding: "10px 15px",
-          borderRadius: "8px",
-          fontWeight: "bold",
-        }}
-      >
+      <div className="absolute bottom-[100px] right-[40px] bg-black/70 text-white py-[10px] px-[15px] rounded-lg font-bold">
         Red Drones: {redDroneCount}
       </div>
     </div>

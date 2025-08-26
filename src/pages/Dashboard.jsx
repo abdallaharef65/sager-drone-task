@@ -5,7 +5,7 @@ function Dashboard() {
   const droneData = useSelector((state) => state.drones.droneData);
   console.log("droneData  > > >", droneData);
 
-  return <div style={{ height: "100vh", width: "100%" }}></div>;
+  return <div className="h-screen w-full"></div>;
 }
 
 export default Dashboard;
