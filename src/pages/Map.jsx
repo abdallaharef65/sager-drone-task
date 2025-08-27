@@ -4,7 +4,6 @@ import Mapbox from "../components/Mapbox";
 import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setDroneCount, setDroneData } from "../redux/slices/droneSlice";
-import DroneSvg from "../assets/svg/DocSvg.svg?react";
 
 function Map() {
   const dispatch = useDispatch();
@@ -18,46 +17,44 @@ function Map() {
 
     return `${hours}:${minutes}:${seconds}`;
   };
-
   useEffect(() => {
     const socket = io("http://localhost:9013");
 
     socket.on("message", (data) => {
       const updated = [...droneData];
-
       data.features.forEach((feature) => {
         const droneId = feature.properties.registration;
-        const coord = feature.geometry.coordinates;
-        const idx = updated.findIndex((d) => d.id === droneId);
-        const firstCharAfterDash = droneId.split("-")[1][0];
+        const coordinates = feature.geometry.coordinates;
+        const idx = updated.findIndex((d) => d.id == droneId);
+        const firstCharFilter = droneId.split("-")[1][0];
 
         if (idx !== -1) {
           updated[idx] = {
             ...updated[idx],
-            color: firstCharAfterDash === "B" ? "#00d93d" : "#ff0000",
+            color: firstCharFilter == "B" ? "#00d93d" : "#ff0000",
             type: feature.type,
             properties: {
               ...feature.properties,
               appearanceTime: updated[idx].properties.appearanceTime,
             },
             geometry: { ...feature.geometry },
-            path: [...updated[idx].path, coord],
+            path: [...updated[idx].path, coordinates],
           };
         } else {
           const appearanceTime = getCurrentTime(new Date());
           updated.push({
-            color: firstCharAfterDash === "B" ? "#00d93d" : "#ff0000",
+            color: firstCharFilter == "B" ? "#00d93d" : "#ff0000",
             id: droneId,
             type: feature.type,
             properties: { ...feature.properties, appearanceTime },
             geometry: { ...feature.geometry },
-            path: [coord],
+            path: [coordinates],
           });
         }
       });
 
       const redCount = updated.reduce(
-        (count, d) => (d.color === "#ff0000" ? count + 1 : count),
+        (count, d) => (d.color == "#ff0000" ? count + 1 : count),
         0
       );
 
@@ -66,7 +63,7 @@ function Map() {
     });
 
     return () => socket.disconnect();
-  }, [dispatch, droneData]);
+  }, [droneData]);
 
   return (
     <div className="h-screen w-full mt-[72px] relative">

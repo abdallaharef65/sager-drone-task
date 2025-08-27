@@ -24,7 +24,7 @@ function Mapbox() {
     if (!mapRef.current || !selectedDrone) return;
 
     const map = mapRef.current;
-    const drone = droneData.find((d) => d.id === selectedDrone);
+    const drone = droneData.find((d) => d.id == selectedDrone);
     if (!drone || !drone.path.length) return;
 
     const lastCoord = drone.path[drone.path.length - 1];
@@ -244,7 +244,7 @@ function Mapbox() {
       map.getCanvas().style.cursor = "";
       popup.remove();
     });
-  }, [dispatch]);
+  }, []);
 
   return (
     <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />

@@ -26,10 +26,10 @@ const Sidebar = () => {
 
   if (
     selectedDrone &&
-    !displayedDrones.some((d) => d.properties.registration === selectedDrone)
+    !displayedDrones.some((d) => d.properties.registration == selectedDrone)
   ) {
     const selectedFullDrone = dronesArray.find(
-      (d) => d.properties.registration === selectedDrone
+      (d) => d.properties.registration == selectedDrone
     );
     if (selectedFullDrone) {
       displayedDrones = [selectedFullDrone, ...displayedDrones];
@@ -39,7 +39,7 @@ const Sidebar = () => {
   let sortedDrones = [...displayedDrones];
   if (selectedDrone) {
     const index = sortedDrones.findIndex(
-      (d) => d.properties.registration === selectedDrone
+      (d) => d.properties.registration == selectedDrone
     );
     if (index > 0) {
       const [selectedItem] = sortedDrones.splice(index, 1);
@@ -69,7 +69,7 @@ const Sidebar = () => {
 
   const getStatusColor = (registration) => {
     const firstCharAfterDash = registration.split("-")[1][0];
-    return firstCharAfterDash === "B";
+    return firstCharAfterDash == "B";
   };
 
   const handleShowAbove = () => {
@@ -103,7 +103,7 @@ const Sidebar = () => {
       <div className="bg-black text-white pt-4 flex flex-col items-center transition-all duration-300 w-36 mb-8">
         <div
           className={`pb-2 pt-2 w-full border-l-4 ${
-            currentPath === "/dashboard"
+            currentPath == "/dashboard"
               ? "border-red-500 bg-[#272727]"
               : "border-transparent"
           }`}
@@ -115,14 +115,14 @@ const Sidebar = () => {
           >
             <DashboardSvg
               className={` ${
-                currentPath === "/dashboard"
+                currentPath == "/dashboard"
                   ? "text-[#FFFFFF]"
                   : "text-[#65717C]"
               }`}
             />
             <div
               className={`text-[15px] ${
-                currentPath === "/dashboard"
+                currentPath == "/dashboard"
                   ? "text-[#FFFFFF]"
                   : "text-[#65717C]"
               }`}
@@ -134,7 +134,7 @@ const Sidebar = () => {
 
         <div
           className={`pb-2 pt-2 w-full border-l-4 ${
-            currentPath === "/map"
+            currentPath == "/map"
               ? "border-red-500 bg-[#272727]"
               : "border-transparent"
           }`}
@@ -146,12 +146,12 @@ const Sidebar = () => {
           >
             <MapSvg
               className={` ${
-                currentPath === "/map" ? "text-[#FFFFFF]" : "text-[#65717C]"
+                currentPath == "/map" ? "text-[#FFFFFF]" : "text-[#65717C]"
               }`}
             />
             <div
               className={`text-[15px] ${
-                currentPath === "/map" ? "text-[#FFFFFF]" : "text-[#65717C]"
+                currentPath == "/map" ? "text-[#FFFFFF]" : "text-[#65717C]"
               }`}
             >
               MAP
@@ -176,7 +176,7 @@ const Sidebar = () => {
               <button
                 onClick={() => setActiveTab("drones")}
                 className={`pb-1 ${
-                  activeTab === "drones"
+                  activeTab == "drones"
                     ? "border-b-2 border-red-500 text-white"
                     : "text-gray-400 hover:text-white"
                 }`}
@@ -186,7 +186,7 @@ const Sidebar = () => {
               <button
                 onClick={() => setActiveTab("history")}
                 className={`pb-1 ${
-                  activeTab === "history"
+                  activeTab == "history"
                     ? "border-b-2 border-red-500 text-white"
                     : "text-gray-400 hover:text-white"
                 }`}
@@ -201,8 +201,8 @@ const Sidebar = () => {
             ref={listRef}
             onScroll={handleScroll}
           >
-            {activeTab === "drones" ? (
-              sortedDrones.length === 0 ? (
+            {activeTab == "drones" ? (
+              sortedDrones.length == 0 ? (
                 <p className="p-4">No drones found</p>
               ) : (
                 <ul>
@@ -220,7 +220,7 @@ const Sidebar = () => {
                       <li
                         key={regNum}
                         className={`border-b border-black p-3 cursor-pointer flex items-center justify-between ${
-                          selectedDrone === regNum
+                          selectedDrone == regNum
                             ? "bg-[#272727] text-white"
                             : "bg-[#111111] hover:bg-gray-700"
                         }`}
