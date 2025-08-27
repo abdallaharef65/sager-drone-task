@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import DroneItem from "./DroneItem";
 import { useSelector } from "react-redux";
 
-const DroneSidebar = () => {
+const DroneSidebar = ({ setIsExpanded }) => {
   // selected drone from redux
   const selectedDrone = useSelector((state) => state.drones.selectedDrone);
 
@@ -112,7 +112,16 @@ const DroneSidebar = () => {
     <div className="w-72 bg-[#111111] text-white flex flex-col m-1.5 h-[840px]">
       {/* header and tab buttons */}
       <div className="px-4 py-2 border-b border-black">
-        <h2 className="text-lg font-bold mb-2">DRONE FLYING</h2>
+        <div className=" py-2 border-b border-black flex items-center justify-between">
+          <h2 className="text-lg font-bold">DRONE FLYING</h2>
+
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="w-6 h-6 flex items-center justify-center rounded-full bg-[#777777] transition cursor-pointer"
+          >
+            <span className="text-black text-sm font-bold">X</span>
+          </button>
+        </div>
         <div className="flex space-x-6 text-sm font-medium">
           <button
             onClick={() => setActiveTab("drones")}

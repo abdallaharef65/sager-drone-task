@@ -76,7 +76,7 @@ const Sidebar = () => {
       </div>
 
       {/* Expanded Sidebar */}
-      {isExpanded && <DroneSidebar />}
+      {isExpanded && <DroneSidebar setIsExpanded={setIsExpanded} />}
     </div>
   );
 };

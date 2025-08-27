@@ -20,7 +20,7 @@ export default function useDroneSocket() {
   // useEffect to manage websocket connection
   // work after mount and when droneData changes
   useEffect(() => {
-    const socket = io("http://localhost:9013"); // must be use env file
+    const socket = io(import.meta.env.VITE_API_URL);
 
     // listen to incoming message from the server
     socket.on("message", (data) => {

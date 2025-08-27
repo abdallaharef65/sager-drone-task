@@ -9,8 +9,7 @@ import { setSelectedDrone } from "../redux/slices/droneSlice";
 import DroneSvg from "../assets/svg/Drone.svg?react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYWJkYWxsYWhhcmVmNjUiLCJhIjoiY21lcHVrOGp4MHNtbjJrcXZsMTBudHNsdiJ9.BrPZ_T8I6bgDAo2iwaPvxQ"; // must be use env file
+mapboxgl.accessToken = import.meta.env.VITE_MAP_BOX_TOKEN;
 
 function MapBox() {
   const dispatch = useDispatch();
