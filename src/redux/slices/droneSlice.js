@@ -1,10 +1,9 @@
-// store/dronesSlice.js
+// dronesSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   droneData: [],
   selectedDrone: null,
-  displayCount: 20,
   redCount: 0,
 };
 
@@ -20,9 +19,6 @@ const dronesSlice = createSlice({
     },
     setSelectedDrone: (state, action) => {
       state.selectedDrone = action.payload;
-    },
-    setDisplayCount: (state, action) => {
-      state.displayCount = action.payload;
     },
   },
 });

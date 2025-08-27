@@ -1,4 +1,4 @@
-// store/index.js
+// store.js
 import { configureStore } from "@reduxjs/toolkit";
 import dronesReducer from "./slices/droneSlice";
 
