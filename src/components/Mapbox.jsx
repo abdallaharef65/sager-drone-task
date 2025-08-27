@@ -11,7 +11,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 mapboxgl.accessToken =
   "pk.eyJ1IjoiYWJkYWxsYWhhcmVmNjUiLCJhIjoiY21lcHVrOGp4MHNtbjJrcXZsMTBudHNsdiJ9.BrPZ_T8I6bgDAo2iwaPvxQ";
 
-export default function Mapbox() {
+function Mapbox() {
   const dispatch = useDispatch();
 
   const selectedDrone = useSelector((state) => state.drones.selectedDrone);
@@ -250,3 +250,4 @@ export default function Mapbox() {
     <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
   );
 }
+export default React.memo(Mapbox);

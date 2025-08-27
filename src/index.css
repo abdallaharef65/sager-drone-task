@@ -9,6 +9,18 @@
   --container-xl: "1240px"; */
 }
 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.fullscreen {
+  height: 100vh;
+  width: 100vw;
+}
+
 .mapboxgl-popup {
   background: transparent !important;
   box-shadow: none !important;

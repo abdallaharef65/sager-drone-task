@@ -1,3 +1,4 @@
+import React from "react";
 import MapSvg from "../assets/svg/Sager.svg?react";
 const AppHeader = () => {
   return (
@@ -7,4 +8,4 @@ const AppHeader = () => {
   );
 };
 
-export default AppHeader;
+export default React.memo(AppHeader);

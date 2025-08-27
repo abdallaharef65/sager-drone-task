@@ -109,6 +109,7 @@ const Sidebar = () => {
           }`}
         >
           <Link
+            onClick={() => setIsExpanded(false)}
             className={`text-white font-bold flex flex-col justify-center items-center transition-all duration-200`}
             to="/dashboard"
           >
@@ -304,4 +305,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default React.memo(Sidebar);
