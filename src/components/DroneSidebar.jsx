@@ -1,5 +1,5 @@
 // DroneSidebar.jsx
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DroneItem from "./DroneItem";
 
 const DroneSidebar = ({ dronesArray, selectedDrone }) => {
@@ -9,6 +9,12 @@ const DroneSidebar = ({ dronesArray, selectedDrone }) => {
   const [startIndex, setStartIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("drones");
   const endIndex = Math.min(startIndex + windowSize, dronesArray.length);
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+  }, [selectedDrone]);
 
   const handleScroll = () => {
     if (!listRef.current) return;
