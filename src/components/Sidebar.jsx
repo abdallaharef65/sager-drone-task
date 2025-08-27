@@ -1,21 +1,16 @@
 // Sidebar.jsx
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import DashboardSvg from "../assets/svg/Dashboard.svg?react";
 import MapSvg from "../assets/svg/Map.svg?react";
 import DroneSidebar from "./DroneSidebar";
 
 const Sidebar = () => {
-  const droneData = useSelector((state) => state.drones.droneData);
-  const selectedDrone = useSelector((state) => state.drones.selectedDrone);
-
   const [isExpanded, setIsExpanded] = useState(false);
 
+  //get the current URL path
   const location = useLocation();
   const currentPath = location.pathname;
-
-  const dronesArray = Array.from(droneData.values());
 
   return (
     <div className="flex h-[878px]">
@@ -81,9 +76,7 @@ const Sidebar = () => {
       </div>
 
       {/* Expanded Sidebar */}
-      {isExpanded && (
-        <DroneSidebar dronesArray={dronesArray} selectedDrone={selectedDrone} />
-      )}
+      {isExpanded && <DroneSidebar />}
     </div>
   );
 };

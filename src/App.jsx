@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router";
 import Sidebar from "./components/Sidebar";
 import AppHeader from "./components/AppHeader";
 
-// Lazy load pages
+// lazy load pages
 const Map = lazy(() => import("./pages/Map"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 

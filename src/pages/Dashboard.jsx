@@ -8,7 +8,7 @@ const DroneDashboard = () => {
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-black text-white text-xl">
-      No drone data available
+      Page without content
     </div>
   );
 };
